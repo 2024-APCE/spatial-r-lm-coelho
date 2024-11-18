@@ -245,16 +245,6 @@ elevation_map_sa <- ggplot() +
 elevation_map_sa
 
 
-
-# make maps also for the other layers that you found
-# combine the different maps  into one composite map using the patchwork library
-all_maps_sa <- woody_map_sa + elevation_map_sa + rainfall_30m_map_sa +
-  patchwork::plot_layout(ncol=1)
-all_maps_sa
-# and save it to a high resolution png
-ggsave("./figures/all_maps_sa.png", width=18, height=18, units="cm", dpi = 300) #it saves in the working directory!!! design in the begining of the script
-
-
 # plot distance to river
 dist2river_sa<-terra::rast("./rivers/DistanceToRiver.tif")
 dist2river_map_sa<-ggplot() +
@@ -303,8 +293,96 @@ valleys_map_sa<-ggplot() +
 valleys_map_sa
 
 
+# plot burning frequency
+# burning frequency map from 2001 - 2016
+burnfreq_sa<-terra::rast("./fire/BurnFreq.tif")
+burnfreq_map_sa<-ggplot() +
+  tidyterra::geom_spatraster(data=burnfreq_sa) +
+  scale_fill_gradientn(colours=pal_zissou2,
+                       limits=c(0,16),
+                       oob=squish,
+                       name="years\nburned") +
+  tidyterra::geom_spatvector(data=protected_areas,
+                             fill=NA,linewidth=0.5) +
+  tidyterra::geom_spatvector(data=studyarea,
+                             fill=NA,linewidth=0.5,col="red") +
+  tidyterra::geom_spatvector(data=lakes,
+                             fill="lightblue",linewidth=0.5) +
+  tidyterra::geom_spatvector(data=rivers,
+                             col="blue",linewidth=0.5) +
+  labs(title="n years burned") +
+  coord_sf(xlimits_sa,ylimits_sa,expand=F,
+           datum = sf::st_crs(32736)) +
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank()) +
+  ggspatial::annotation_scale(location="bl",width_hint=0.2)
+burnfreq_map_sa
 
 
+#plot soil fertility
+# soil cation exchange capacity (CEC)
+cec_sa<-terra::rast("./soil/CEC_5_15cm.tif")
+hist(cec_sa)
+cec_map_sa<-ggplot() +
+  tidyterra::geom_spatraster(data=cec_sa) +
+  scale_fill_gradientn(colours=pal_zissou1,
+                       limits=c(100,350),
+                       oob=squish,
+                       name="Soil\nCEC\n5-15cm") +
+  tidyterra::geom_spatvector(data=protected_areas,
+                             fill=NA,linewidth=0.5) +
+  tidyterra::geom_spatvector(data=studyarea,
+                             fill=NA,linewidth=0.5,col="red") +
+  tidyterra::geom_spatvector(data=lakes,
+                             fill="lightblue",linewidth=0.5) +
+  tidyterra::geom_spatvector(data=rivers,
+                             col="blue",linewidth=0.5) +
+  labs(title="Soil CEC") +
+  coord_sf(xlimits_sa,ylimits_sa,expand=F,
+           datum = sf::st_crs(32736)) +
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank()) +
+  ggspatial::annotation_scale(location="bl",width_hint=0.2)
+cec_map_sa
+
+
+# core_protected_areas  map 
+r<-terra::rast("./2022_protected_areas/CoreProtectedAreas.tif") 
+CoreProtectedAreas_sa <- r |> #  replace NA by 0
+  is.na() |>
+  terra::ifel(0,r) 
+
+CoreProtectedAreas_map_sa<-ggplot() +
+  tidyterra::geom_spatraster(data=as.factor(CoreProtectedAreas_sa)) +
+  scale_fill_manual(values=c("grey","lightgreen"),
+                    labels=c("no","yes")) +
+  tidyterra::geom_spatvector(data=protected_areas,
+                             fill=NA,linewidth=0.5) +
+  tidyterra::geom_spatvector(data=studyarea,
+                             fill=NA,linewidth=0.5,col="red") +
+  tidyterra::geom_spatvector(data=lakes,
+                             fill="lightblue",linewidth=0.5) +
+  tidyterra::geom_spatvector(data=rivers,
+                             col="blue",linewidth=0.5) +
+  labs(title="Core protected areas") +
+  coord_sf(xlimits_sa,ylimits_sa,expand=F,
+           datum = sf::st_crs(32736)) +
+  theme(axis.text = element_blank(),
+        axis.ticks = element_blank()) +
+  ggspatial::annotation_scale(location="bl",width_hint=0.2)
+CoreProtectedAreas_map_sa
+
+
+
+# make maps also for the other layers that you found
+# combine the different maps  into one composite map using the patchwork library
+all_maps_sa <- woody_map_sa + elevation_map_sa + rainfall_30m_map_sa + dist2river_map_sa +
+  valleys_map_sa + burnfreq_map_sa + cec_map_sa + CoreProtectedAreas_map_sa +
+  patchwork::plot_layout(ncol=3)
+all_maps_sa
+# and save it to a high resolution png
+ggsave("./figures/final_maps_sa.png", width=40, height=20, units="cm", dpi = 300) #it saves in the working directory!!! design in the begining of the script
+# C:\Users\leono\Desktop\APCE2024\apce2024gis\figures
 
 
 
