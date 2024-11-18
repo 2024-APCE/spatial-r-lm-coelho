@@ -449,17 +449,49 @@ valleys_points <- terra::extract(valleys_sa, rpoints) |>
   dplyr::rename(valleys=remapped)
 valleys_points
 
+burnfreq_points <- terra::extract(burnfreq_sa, rpoints) |> 
+  as_tibble() |> 
+  dplyr::rename(burnfreq=burned_sum)
+burnfreq_points
+
+cec_points <- terra::extract(cec_sa, rpoints) |> 
+  as_tibble() |> 
+  dplyr::rename(CEC="cec_5-15cm_mean")
+cec_points
+
+CoreProtectedAreas_points <- terra::extract(CoreProtectedAreas_sa, rpoints) |> 
+  as_tibble() |> 
+  dplyr::rename(PA=CoreProtectedAreas)
+CoreProtectedAreas_points
+
+
+
 
 # merge the different variable into a single table
 # use woody biomass as the last variable
 pointdata<-cbind(dist2river_points[,2],elevation_points[,2],rainfall_points[,2],
-                 valleys_points[,2],
-                 woody_points[,2]) |>
+                 valleys_points[,2], burnfreq_points[,2], cec_points[,2], 
+                 CoreProtectedAreas_points[,2], woody_points[,2]) |>
   as_tibble()
 pointdata
 
 pointdata <- pointdata[complete.cases(pointdata),]
 pointdata
+
+
+
+gtwd()
+readr::write_csv(pointdata, "pointdata.csv")
+
+
+
+
+
+
+
+
+
+
 
 # plot how woody cover is predicted by different variables
 # Create a correlation panel plot
@@ -474,8 +506,6 @@ psych::pairs.panels(
   lm = TRUE,                # Add linear regression lines
   stars=T
 )
-
-
 
 # make long format
 # ggplot prefers long data
@@ -495,7 +525,13 @@ ggplot(data=pointdata_long, mapping=aes(x=pred_val,y=woody,group=pred_var)) +
 
 
 
-# do a pca
+
+
+
+
+
+
+########## PCA PLOT ###########
 # Load the vegan package
 library(vegan)
 # Perform PCA using the rda() function
