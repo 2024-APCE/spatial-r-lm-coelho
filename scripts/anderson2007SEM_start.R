@@ -49,7 +49,7 @@ psych::pairs.panels(Anderson2007 %>% select(RES_LHU,BIOMASS,FIRE_FRQ,NMS,
 psych::pairs.panels(Anderson2007std %>% select(RES_LHU,BIOMASS,FIRE_FRQ,NMS,
                                                LF_N),
                     stars = T, ellipses = F)
-#standerize just change the units (to negative) but the relation stays the same
+#standarize just change the units (to negative) but the relation stays the same
 
 
 
@@ -57,15 +57,24 @@ psych::pairs.panels(Anderson2007std %>% select(RES_LHU,BIOMASS,FIRE_FRQ,NMS,
 #this is "stupid model"
 multreg_std <- lm(LF_N ~ RES_LHU + BIOMASS + FIRE_FRQ + NMS, data= Anderson2007std)
 summary(multreg_std)
+#influences not significant
+#this model does not consider how the predictors influence each other
 
 
 # visualization of the result: 
-# browseURL("https://docs.google.com/presentation/d/1Q7uXC5Wiu0G4Xsp5uszCNHKOnf1IMI9doY-13Wbay4A/edit?usp=sharing")
+#browseURL("https://docs.google.com/presentation/d/1Q7uXC5Wiu0G4Xsp5uszCNHKOnf1IMI9doY-13Wbay4A/edit?usp=sharing")
 
-# Make a lavaan model as hypothesized in the Anderson et al 2007 paper and fit the model 
-
+# Make a lavaan model as hypothesized in the Anderson et al 2007 paper and fit the model
+#model is describe in a string '...'
+Leaf_N_model <- 'LF_N~BIOMASS+RES_LHU+FIRE_FRQ+NMS
+                BIOMASS~FIRE_FRQ+RES_LHU
+                NMS~FIRE_FRQ+RES_LHU'
+Leaf_N_model
+Leaf_N_fit <- lavaan::sem(Leaf_N_model, data=Anderson2007std)
 
 # show the model results
+summary(Leaf_N_fit, standardized=T, fit.measures=T, rsquare=T)
+# CFI=0.995 and TLI=0.953 -> GOOD MODEL!!
 # goodness of fit (should be >0.9): CFI and TLI
 # badness of fit: ( should be <0.1): RMSEA, SRMR
 
@@ -76,5 +85,18 @@ summary(multreg_std)
 # also explore the models as shown in fig 5b and 5c of the Anderson2007 paper
 # so repeat the model for leaf P content
 
+# to see the singles realations
+psych::pairs.panels(Anderson2007std %>% select(RES_LHU,BIOMASS,FIRE_FRQ,NMS,
+                                               LF_P),
+                    stars = T, ellipses = F)
 
+# lavaan model for leaf P content
+Leaf_P_model <- 'LF_P~BIOMASS+RES_LHU+FIRE_FRQ+NMS
+                BIOMASS~FIRE_FRQ+RES_LHU
+                NMS~FIRE_FRQ+RES_LHU'
+Leaf_P_model
+Leaf_P_fit <- lavaan::sem(Leaf_P_model, data=Anderson2007std)
 
+# show the model results
+summary(Leaf_P_fit, standardized=T, fit.measures=T, rsquare=T)
+# CFI=0.995 and TLI=0.952 -> GOOD MODEL!!
