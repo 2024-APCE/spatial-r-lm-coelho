@@ -92,7 +92,7 @@ woody_map <- ggplot() +
                              fill="lightblue", linewidth=0.5) +
   tidyterra::geom_spatvector(data=rivers,
                              col="blue", linewidth=0.5) + #col, for colour bc is not a poligon
-  labs(title = "woody biomass") +
+  labs(title = "Woody biomass") +
   coord_sf(xlimits, ylimits, datum=sf::st_crs(32736)) + #specific coord of my map
   theme(axis.text=element_blank(),
         axis.ticks = element_blank()) +
@@ -115,7 +115,7 @@ rainfall_map <- ggplot() +
                              fill="lightblue", linewidth=0.5) +
   tidyterra::geom_spatvector(data=rivers,
                              col="blue", linewidth=0.5) + #col, for colour bc is not a poligon
-  labs(title ="rainfall") +
+  labs(title ="Rainfall") +
   coord_sf(xlimits, ylimits, datum=sf::st_crs(32736)) + #specific coord of my map
   theme(axis.text=element_blank(),
         axis.ticks = element_blank()) +
@@ -137,7 +137,7 @@ elevation_map <- ggplot() +
                              fill="lightblue", linewidth=0.5) +
   tidyterra::geom_spatvector(data=rivers,
                              col="blue", linewidth=0.5) + #col, for colour bc is not a poligon
-  labs(title ="elevation") +
+  labs(title ="Elevation") +
   coord_sf(xlimits, ylimits, datum=sf::st_crs(32736)) + #specific coord of my map
   theme(axis.text=element_blank(),
         axis.ticks = element_blank()) +
@@ -147,10 +147,10 @@ elevation_map
 
 # combine the different maps  into one composite map using the patchwork library
 all_maps <- woody_map + elevation_map + rainfall_map +
-  patchwork::plot_layout(ncol=1)
+  patchwork::plot_layout(ncol=3)
 all_maps
 # and save it to a high resolution png
-ggsave("./figures/all_maps.png", width=18, height=18, units="cm", dpi = 300) #it saves in the working directory!!! design in the begining of the script
+ggsave("./figures/intro_maps.png", width=30, height=15, units="cm", dpi = 300) #it saves in the working directory!!! design in the begining of the script
 
 ## CHOOSE TWO MORE VARIABLES
 
@@ -181,7 +181,7 @@ woody_map_sa <- ggplot() +
                              fill="lightblue", linewidth=0.5) +
   tidyterra::geom_spatvector(data=rivers,
                              col="blue", linewidth=0.5) + #col, for colour bc is not a poligon
-  labs(title = "woody biomass") +
+  labs(title = "Woody biomass") +
   coord_sf(xlimits_sa, ylimits_sa, expand=F,
            datum=sf::st_crs(32736)) + #specific coord of my map
   theme(axis.text=element_blank(),
@@ -237,7 +237,7 @@ elevation_map_sa <- ggplot() +
                              fill="lightblue", linewidth=0.5) +
   tidyterra::geom_spatvector(data=rivers,
                              col="blue", linewidth=0.5) + #col, for colour bc is not a poligon
-  labs(title ="elevation") +
+  labs(title ="Elevation") +
   coord_sf(xlimits_sa, ylimits_sa, datum=sf::st_crs(32736)) + #specific coord of my map
   theme(axis.text=element_blank(),
         axis.ticks = element_blank()) +
@@ -310,7 +310,7 @@ burnfreq_map_sa<-ggplot() +
                              fill="lightblue",linewidth=0.5) +
   tidyterra::geom_spatvector(data=rivers,
                              col="blue",linewidth=0.5) +
-  labs(title="n years burned") +
+  labs(title="Number of years burned") +
   coord_sf(xlimits_sa,ylimits_sa,expand=F,
            datum = sf::st_crs(32736)) +
   theme(axis.text = element_blank(),
@@ -337,7 +337,7 @@ cec_map_sa<-ggplot() +
                              fill="lightblue",linewidth=0.5) +
   tidyterra::geom_spatvector(data=rivers,
                              col="blue",linewidth=0.5) +
-  labs(title="Soil CEC") +
+  labs(title="Soil cation exchange capacity (CEC)") +
   coord_sf(xlimits_sa,ylimits_sa,expand=F,
            datum = sf::st_crs(32736)) +
   theme(axis.text = element_blank(),
@@ -416,11 +416,12 @@ rpoints_map_sa
 
 
 # combine the maps with patchwork
-all_maps_sa<-woody_map_sa + elevation_map_sa + rainfall_30m_map_sa +
+all_maps_sa<-woody_map_sa + elevation_map_sa + rainfall_30m_map_sa + dist2river_map_sa +
+  valleys_map_sa + burnfreq_map_sa + cec_map_sa + CoreProtectedAreas_map_sa +
   rpoints_map_sa +
-  patchwork::plot_layout(ncol=4)
+  patchwork::plot_layout(ncol=3)
 all_maps_sa
-ggsave("./figures/all_maps_sa.png", width = 297, height = 210, units = "mm",dpi=300)
+ggsave("./figures/finally_maps_sa.png", width=40, height=20, units="cm", dpi = 300)
 
 
 # extract your the values of the different raster layers to the points
