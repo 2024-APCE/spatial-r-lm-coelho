@@ -16,22 +16,17 @@ SEMdatastd
 
 
 # make a pairs panel to inspect linearity of relations and expected normality of residuals
-psych::pairs.panels(SEMdata %>% select(dist2river,elevation,rainfall,valleys, burnfreq, 
-                                       CEC, PA, woody),
+library(psych)
+psych::pairs.panels(SEMdata %>% dplyr::select(dist2river,elevation,rainfall,valleys,burnfreq,
+                                       CEC,PA,woody),
                     stars = T, ellipses = F)
 #standarize just change the units (to negative) but the relation stays the same
-psych::pairs.panels(SEMdatastd %>% select(dist2river,elevation,rainfall,valleys, burnfreq, 
+psych::pairs.panels(SEMdatastd %>% dplyr::select(dist2river,elevation,rainfall,valleys, burnfreq, 
                                           CEC, PA, woody),
-                    stars = T, ellipses = F)
+                    stars = T, ellipses = F, cex.labels = 1.5, cex.cor = 2)
 
 
 
-# analyse the model (response ~ predictors) with a multiple regression approach
-#this is "stupid model"
-multreg_std <- lm(LF_N ~ RES_LHU + BIOMASS + FIRE_FRQ + NMS, data= Anderson2007std)
-summary(multreg_std)
-#influences not significant
-#this model does not consider how the predictors influence each other
 
 
 # visualization of the result: 
@@ -39,14 +34,22 @@ summary(multreg_std)
 
 # Make a lavaan model as hypothesized in the Anderson et al 2007 paper and fit the model
 #model is describe in a string '...'
-Leaf_N_model <- 'LF_N~BIOMASS+RES_LHU+FIRE_FRQ+NMS
-                BIOMASS~FIRE_FRQ+RES_LHU
-                NMS~FIRE_FRQ+RES_LHU'
-Leaf_N_model
-Leaf_N_fit <- lavaan::sem(Leaf_N_model, data=Anderson2007std)
+woody_model <- 'woody~dist2river+elevation+rainfall+valleys+burnfreq+CEC+PA
+                rainfall~elevation
+                valleys~dist2river
+                burnfreq~dist2river+elevation
+                CEC~dist2river+elevation+rainfall+burnfreq+PA'
+woody_model
+woody_fit <- lavaan::sem(woody_model, data=SEMdatastd)
 
 # show the model results
-summary(Leaf_N_fit, standardized=T, fit.measures=T, rsquare=T)
-# CFI=0.995 and TLI=0.953 -> GOOD MODEL!!
+summary(woody_fit, standardized=T, fit.measures=T, rsquare=T)
+# CFI=0.785 and TLI=0.403 -> NOT GOOD MODEL!!
 # goodness of fit (should be >0.9): CFI and TLI
 # badness of fit: ( should be <0.1): RMSEA, SRMR
+
+# this is not the best model to explain woody cover variation 
+#there is the need to check causalities of some variables!
+
+#make another model Piecewise!!!
+#(e.g. where Rainfall don't affect woody directly but only CEC/ PA only influencing CEC/ maybe taking valleys out?!)
