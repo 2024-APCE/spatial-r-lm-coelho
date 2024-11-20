@@ -1,19 +1,19 @@
 
-woody_model2 <- 'woody~dist2river+elevation+burnfreq+CEC
-                rainfall~elevation
-                burnfreq~dist2river
-                CEC~dist2river+rainfall+burnfreq+PA'
-woody_model2
-woody_fit2 <- lavaan::sem(woody_model2, data=SEMdatastd)
-
-# show the model results
-summary(woody_fit2, standardized=T, fit.measures=T, rsquare=T)
-
-
-
-
-
 renv::restore()
+
+
+library(terra)       # for working with raster data
+library(tidyterra)   # for adding terra objects to ggplot
+library(ggspatial)  # for scale bars
+library(sf)          # for vector data objects
+library(tidyverse)   # ggplot, dplyr etc
+library(scales)      # for oob (out of bounds) scale
+library(ggnewscale) # for using multiple color fill scales in ggplot
+library(patchwork)  # for combining multiple ggplots in one panel plot
+library(ggplot2)
+library(psych)
+library(piecewiseSEM)
+
 
 # read the data from the google docs link:
 SEMdata <-read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vR-cr8z8Pye7gakP0ihX5SUtNLU8h_evJAySe4ZcnRL1d2HAoOkHKmDe9cM6uA4oC1A4QRArIlxFX5V/pub?gid=1240187235&single=true&output=csv")
@@ -113,11 +113,10 @@ all_plots<-woody1+woody2+burnfreq1+CEC1+CEC2+rainfall1 +
 all_plots
 
 ####### Combine all models into a single piecewise SEM
-psem_model <- piecewiseSEM::psem(model_woody,
-                                 model_burnfreq,
-                                 model_cec,
-                                 model_CorProtAr,
-                                 model_rainfall)
+psem_model <- piecewiseSEM::psem(piece_woody,
+                                 piece_burnfreq,
+                                 piece_cec,
+                                 piece_rainfall)
 
 # Summarize the SEM results
 summary(psem_model)
