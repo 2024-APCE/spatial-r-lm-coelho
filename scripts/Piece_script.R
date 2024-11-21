@@ -33,6 +33,7 @@ woody1<-ggplot(data=SEMdata,aes(x=CEC,y=woody))+
               se=T)
 woody1
 
+
 woody2<-ggplot(data=SEMdata,aes(x=burnfreq,y=woody))+
   geom_point() +
   geom_smooth(method="lm",
@@ -90,7 +91,7 @@ CEC2
 
 
 # MODEL 4: rainfall predicted by elevation
-piece_rainfall <- lm(rainfall ~  elevation, 
+piece_rainfall <- glm(rainfall ~  elevation + dist2river, 
                   data = SEMdata)
 summary(piece_rainfall)
 
@@ -102,15 +103,24 @@ rainfall1 <-ggplot(data=SEMdata,aes(x=elevation,y=rainfall))+
 rainfall1
 
 
+rainfall2 <-ggplot(data=SEMdata,aes(x=dist2river,y=rainfall))+
+  geom_point() +
+  geom_smooth(method="lm",
+              formula= y~x,
+              se=T)
+rainfall2
+
 
 
 ##################################################
 # combine the figures
 library(patchwork)
-all_plots<-woody1+woody2+burnfreq1+CEC1+CEC2+rainfall1 +
+all_plots<-woody1+woody2+burnfreq1+CEC1+CEC2+rainfall1+rainfall2 +
   patchwork::plot_layout(ncol=3) +
-  patchwork::plot_annotation(title="Relations in model 1")
+  patchwork::plot_annotation(title="Relations in model 3")
 all_plots
+
+
 
 ####### Combine all models into a single piecewise SEM
 psem_model <- piecewiseSEM::psem(piece_woody,
