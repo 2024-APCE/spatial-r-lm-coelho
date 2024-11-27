@@ -16,3 +16,8 @@ temp_data <- read_excel("C:/Users/leono/Desktop/APCE2024/trait_project/Individua
   dplyr::summarize(tmp_avg=mean(AvgTemp24Hr)) |>
   filter(YYYY >= 1996 & YYYY <= 2015) |>
   dplyr::rename(year = YYYY)
+
+
+# plot of temperature
+ggplot(temp_data, aes(x=year, y=tmp_avg)) + 
+  geom_line()
