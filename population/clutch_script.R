@@ -94,6 +94,7 @@ m_temp <- lmerTest::lmer(clutch_avg ~ tmp_avg + (1|adult_ID) + (1|year), data=m_
 summary(m_temp)
 confint(m_temp)
 
+#WHAT IS HAPPENING HERE...?
 model_plot <- ggplot(m_data, aes(x=year, y=clutch_avg)) +
   geom_point()+
   geom_smooth(method="loess")  # Add linear regression line # BETTER SMOOTH?!
