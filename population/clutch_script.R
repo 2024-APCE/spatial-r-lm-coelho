@@ -40,6 +40,7 @@ ggplot(clutch, aes(x=year, y=clutch_avg)) +
   geom_smooth(method=lm,   # Add linear regression line # BETTER SMOOTH?!
               se=FALSE)
   
+
 #join temperature data to buzzard data
 temp_data <- read_excel("C:/Users/leono/Desktop/APCE2024/trait_project/Individual_Trait_Data_Excel.xlsx", sheet = "EnvironmentalCovariates" ) |>
   na.omit()
