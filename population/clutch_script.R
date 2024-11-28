@@ -101,7 +101,7 @@ clutch_tmp
 ############
 
 
-#model of clutchsize and temperature with ramdom factors 
+# 2- model of clutchsize and temperature with ramdom factors 
 m_temp <- lmerTest::lmer(clutch_avg ~ tmp_avg + (1|adult_ID) + (1|year), data=m_data)
 summary(m_temp)
 confint(m_temp)
@@ -118,7 +118,7 @@ r2_year # 0.09
 
 
 
-#model of PLASTICITY
+# 3- model of PLASTICITY
 #Model with (within individual effect) and  (between individual effect)
 #Data with centered temperature per individual
 plast_data <- m_data |>
