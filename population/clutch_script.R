@@ -96,7 +96,13 @@ clutch_tmp <- ggplot(clutch_data, aes(x= tmp_avg, y=clutch_avg)) +
   geom_errorbar(aes(ymin=clutch_avg-clutch_se, ymax=clutch_avg+clutch_se), width=.1) +
   geom_point()+
   geom_smooth(method="loess",   # Add linear regression line # BETTER SMOOTH?!
-              se=FALSE)
+              se=FALSE) + 
+  labs(title = "Variation of clutch size with temperature",
+       x = "Average temperature",
+       y = "Average clutch size") + 
+  theme(text = element_text(size=20),
+        legend.text = element_text(size = 15),
+        legend.key.size = unit(0.3, "cm"))
 clutch_tmp
 ############
 
@@ -124,6 +130,8 @@ r2_year # 0.09
 plast_data <- m_data |>
   dplyr::group_by(adult_ID) |>
   dplyr::summarize(btw_affect=mean(tmp_avg)) #between individual temperature ->avg temperature per female
+
+count(plast_data)
 
 ## Between individual effect: mean temperature for each female! This is how individuals differ
 m_data <- m_data %>% left_join(plast_data, by = "adult_ID")

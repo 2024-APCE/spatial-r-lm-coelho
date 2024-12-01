@@ -49,12 +49,62 @@ laying_plot <- ggplot(visual_laying, aes(x= year, y=laying_avg)) +
   geom_errorbar(aes(ymin=laying_avg-laying_se, ymax=laying_avg+laying_se), width=.1) +
   geom_point()+
   geom_smooth(method="loess",   # Add linear regression line # BETTER SMOOTH?!
-              se=FALSE)
+              se=FALSE) +
+  labs(title = "Laying date from 1996 to 2015",
+       x = "Year",
+       y = "Average laying date") + 
+  scale_x_continuous(breaks = seq(1995, 2015, by = 5)) +
+  theme(text = element_text(size=18),
+        legend.text = element_text(size = 15),
+        legend.key.size = unit(0.3, "cm"))
 laying_plot
 
 temp_plot <- ggplot(all_data, aes(x=year, y=tmp_avg)) + 
-  geom_line()
+  geom_line() +
+  labs(title = "Temperature variation from 1996 to 2015",
+       x = "Year",
+       y = "Average temperature") + 
+  scale_x_continuous(breaks = seq(1995, 2015, by = 5)) +
+  theme(text = element_text(size=18),
+        legend.text = element_text(size = 15),
+        legend.key.size = unit(0.3, "cm"))
 temp_plot
+
+# clutch size variation per year
+clutch_data <- buzzard_data |>
+  filter(sex2 == "female") |>
+  dplyr::group_by(year) |>
+  dplyr::summarize(clutch_avg=mean(eggs),
+                   n_obs=n(),
+                   clutch_sd=sd(eggs),
+                   clutch_se=clutch_sd/sqrt(n_obs))
+clutch_data <-
+  dplyr::left_join(clutch_data, temp_data,by="year")
+
+#point plot clutch size per year
+clutch_plot <- ggplot(clutch_data, aes(x=year, y=clutch_avg)) + 
+  geom_errorbar(aes(ymin=clutch_avg-clutch_se, ymax=clutch_avg+clutch_se), width=.1) +
+  geom_point()+
+  geom_smooth(method="loess",   # Add linear regression line # BETTER SMOOTH?!
+              se=FALSE) +
+  labs(title = "Clutch size from 1996 to 2015",
+       x = "Year",
+       y = "Average clutch size") + 
+  scale_x_continuous(breaks = seq(1995, 2015, by = 5)) +
+  theme(text = element_text(size=18),
+        legend.text = element_text(size = 15),
+        legend.key.size = unit(0.3, "cm"))
+clutch_plot
+
+
+# combine the figures
+library(patchwork)
+all_plots<- clutch_plot+laying_plot+temp_plot+
+  patchwork::plot_layout(ncol=1)
+all_plots
+
+
+
 
 # combine the figures
 library(patchwork)
@@ -110,6 +160,8 @@ plast_lay_data <- laying_data |>
   dplyr::group_by(adult_ID) |>
   dplyr::summarize(btw_lay_affect=mean(tmp_avg)) #between individual temperature ->avg temperature per female
 
+count(plast_lay_data)
+
 ## Between individual effect: mean temperature for each female! This is how individuals differ
 laying_data <- laying_data |> left_join(plast_lay_data, by = "adult_ID")
 
@@ -138,6 +190,12 @@ relation_plot <- ggplot(visual_laying, aes(x= tmp_avg, y=laying_avg)) +
   geom_errorbar(aes(ymin=laying_avg-laying_se, ymax=laying_avg+laying_se), width=.1) +
   geom_point()+
   geom_smooth(method="loess",   # Add linear regression line # BETTER SMOOTH?!
-              se=FALSE)
+              se=FALSE) +
+  labs(title = "Variation of laying date with temperature",
+       x = "Average temperature",
+       y = "Average laying date") + 
+  theme(text = element_text(size=20),
+        legend.text = element_text(size = 15),
+        legend.key.size = unit(0.3, "cm"))
 relation_plot
 
