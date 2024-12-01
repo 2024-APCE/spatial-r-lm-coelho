@@ -1,10 +1,12 @@
 remove(list=ls())
 
+
 renv::restore()
 
 library(tidyverse) 
 library(ggplot2)
 library(lme4)
+library(lmerTest)
 
 #upload data
 CS1 <- read.table("https://docs.google.com/spreadsheets/d/e/2PACX-1vQVcphvEPyp-VCzTdRQUtE_M4KkylBLS9yfzNGSCAtC08NrOhupLAZPMeQgxd4TLIK11JPhq9cMqV5p/pub?gid=1736259690&single=true&output=csv", h=T, sep=",") |>
@@ -99,7 +101,7 @@ squidApp()
 
 #### RANDOM INTERCEPT MODEL
 # high VI, large variance of individuals -> high r
-# high Vm, high slope variance (it seemns diference responses but is actually measure error)
+# high Vm, high slope variance (it seemn diference responses but is actually measure error)
 
 #### RANDOM SLOPE MODEL
 
